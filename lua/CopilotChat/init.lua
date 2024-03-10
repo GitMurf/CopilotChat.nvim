@@ -128,18 +128,9 @@ local function append(str)
   end
 end
 
-local function complete()
-  local line = vim.api.nvim_get_current_line()
-  local col = vim.api.nvim_win_get_cursor(0)[2]
-  if col == 0 or #line == 0 then
-    return
-  end
-
-  local prefix, cmp_start = unpack(vim.fn.matchstrpos(line:sub(1, col), '\\/\\|@\\k*$'))
-  if not prefix then
-    return
-  end
-
+-- Get list of completion items
+---@return { word: string, kind: string, info: string|nil, menu: string, icase: number, dup: number, empty: number }[]
+function M.get_completion_items()
   local items = {}
   local prompts_to_use = M.prompts()
 
@@ -172,6 +163,23 @@ local function complete()
     dup = 0,
     empty = 0,
   }
+
+  return items
+end
+
+local function complete()
+  local line = vim.api.nvim_get_current_line()
+  local col = vim.api.nvim_win_get_cursor(0)[2]
+  if col == 0 or #line == 0 then
+    return
+  end
+
+  local prefix, cmp_start = unpack(vim.fn.matchstrpos(line:sub(1, col), '\\/\\|@\\k*$'))
+  if not prefix then
+    return
+  end
+
+  local items = M.get_completion_items()
 
   items = vim.tbl_filter(function(item)
     return vim.startswith(item.word:lower(), prefix:lower())
