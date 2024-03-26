@@ -206,7 +206,7 @@ function M.setup(sources)
   sources = sources or { { name = 'buffer' } }
   table.insert(sources, { name = 'copilotchat' })
 
-  cmp.setup.filetype('copilotchat', {
+  cmp.setup.filetype('copilot-chat', {
     sources = cmp.config.sources(sources),
     window = {
       documentation = {
